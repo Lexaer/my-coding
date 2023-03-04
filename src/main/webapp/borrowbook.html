@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>图书管理系统</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="webjars/jquery/3.1.1/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script>
+<!-- 在页面加载完成后载入得到读者名和书籍名的函数并将内容写到单选框里选择，加载表单检验函数   -->
+    window.addEventListener("load",GetUserName,false);
+    window.addEventListener("load",GetBookName,false);
+    window.addEventListener("load",Check,false);
+      function GetUserName(){
+        var username=document.getElementById("username").innerHTML;
+        $.get("FindSearchUser",{},function(data){
+          for(var i=0;i<data.length;i++){
+            username+= `<option>${data[i].name}</option>`
+          }
+        },"JSON").then((res)=>{
+          document.getElementById("username").innerHTML=username;
+        });
+      }
+
+
+    function GetBookName(){
+      var bookname=document.getElementById("bookname").innerHTML;
+      $.get("FindSearchBook",{},function(data){
+        for(var i=0;i<data.length;i++){
+          bookname+= `<option>${data[i].name}</option>`
+        }
+      },"JSON").then((res)=>{
+        document.getElementById("bookname").innerHTML=bookname;
+      });
+    }
+
+
+    function Check(){
+      document.getElementById("form").onsubmit=function (){
+        var usernameselect=document.getElementById("username").value;
+        var booknameselect=document.getElementById("bookname").value;
+        var datetimeselect=document.getElementById("datetime").value;
+        var search=document.getElementById("search").innerHTML;
+        if(usernameselect!=""&&booknameselect!=""&&datetimeselect!=""){
+          search="";
+          document.getElementById("search").innerHTML=search;
+          return true;
+        }else{
+          search="需填完全部内容";
+          document.getElementById("search").innerHTML=search;
+          return false;
+        }
+      }
+    }
+
+
+  </script>
+</head>
+<!--页面主体-->
+<body style="background-color: lightgrey">
+<div style="height: 60px;line-height: 60px; background-color: white"><img src="assets/logo.png" alt="" style="width: 40px; position: relative;top: 10px;left: 20px;margin-bottom: 30px">
+  <span style="margin-left: 25px;font-size:24px">图书管理系统</span>
+</div>
+<div style="display: flex">
+  <div style="width: 200px;min-height:92vh;overflow: hidden;margin-right: 2px;background-color: white">
+    <div style="margin-left: 25px;font-size:24px"><a href="zhuye.html">用户信息</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="bookInfo.html">图书信息</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="AdminInfo.html">管理员信息</a></div>
+
+    <div style="margin-left: 25px;font-size:24px"><a href="borrowbook.html">借书</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="TotalBorrowAndReturn.html">借阅查询</a></div>
+  </div>
+  <div style="flex: 1;background-color: white">
+    <form id="form" action="BorrowBook" method="post">
+      <div align="center" style="font-size:24px">借书</div>
+      <div>
+        <label for="username" style="font-size: 24px">借书人</label>
+        <select name="username" id="username" class="form-control"></select>
+      </div>
+      <div>
+        <label for="bookname"style="font-size: 24px">书籍名称</label>
+        <select name="bookname" id="bookname" class="form-control"></select>
+      </div>
+      <div>
+        <label for="datetime"style="font-size: 24px">出借日期</label><br>
+        <input type="datetime-local" style="font-size: 24px" id="datetime" name="datetime">
+      </div>
+      <div align="center"><button  type="submit" class=" btn btn-group" style="font-size:20px">提交</button>
+        <a href="zhuye.html"><button type="button" class="btn btn-info" style="font-size:20px;">返回</button></a>
+      </div>
+      <span id="search" class="has-error" style="color: red"></span>
+    </form>
+  </div>
+</div>
+</body>
+</html>

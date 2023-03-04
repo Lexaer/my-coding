@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>图书管理系统</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="webjars/jquery/3.1.1/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script>
+    <!-- 在页面加载完成后加载表单检验函数，判断表单内容是否符合设计规范   -->
+    window.onload=function (){
+      document.getElementById("form_1").onsubmit=function (event){
+        event.preventDefault()
+        return checkBookname()&&checkBookauthor()&&checkBookpublishdate()&&checkBookISBN();
+      }
+    }
+    // 检验书名是否为空
+    function checkBookname(){
+      var bookname = document.getElementById("name").value;
+      var reg_bookname= /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/
+      var flag=reg_bookname.test(bookname);
+      var s_bookname=document.getElementById("s_bookname");
+      if(flag){
+        s_bookname.innerHTML=""
+      }else{
+        s_bookname.innerHTML="书名不能为空"
+      }
+      return flag;
+    }
+    //检验作者名称是否为空
+    function checkBookauthor(){
+      var author = document.getElementById("author").value;
+      var reg_author= /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/
+      var flag=reg_author.test(author);
+      var s_author=document.getElementById("s_author");
+      if(flag){
+        s_author.innerHTML=""
+      }else{
+        s_author.innerHTML="作者名称不能为空"
+      }
+      return flag;
+    }
+    //检验书籍出版日期是否为空
+    function checkBookpublishdate(){
+      var publishdate = document.getElementById("publishdate").value;
+      var reg_publishdate=/^[\u4e00-\u9fa5_a-zA-Z0-9]+$/
+      var flag=reg_publishdate.test(publishdate);
+      var s_publishdate=document.getElementById("s_publishdate");
+      if(flag){
+        s_publishdate.innerHTML=""
+      }else{
+        s_publishdate.innerHTML="出版日期不能为空";
+      }
+      return flag;
+    }
+    //检验ISBN编码是否符合格式
+    function checkBookISBN(){
+      var ISBN=document.getElementById("ISBN").value;
+      var reg_ISBN=/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/;
+      var flag=reg_ISBN.test(ISBN);
+      var s_ISBN=document.getElementById("s_ISBN");
+      if(flag){
+        s_ISBN.innerHTML="";
+      }else{
+        s_ISBN.innerHTML="ISBN不能为空或格式错误";
+      }
+      return flag;
+    }
+  </script>
+</head>
+<!--页面主体布局-->
+<body style="background-color: lightgrey">
+<div style="height: 60px;line-height: 60px; background-color: white"><img src="assets/logo.png" alt="" style="width: 40px; position: relative;top: 10px;left: 20px;margin-bottom: 30px">
+  <span style="margin-left: 25px;font-size:24px">图书管理系统</span>
+</div>
+<div style="display: flex">
+  <div style="width: 200px;min-height:92vh;overflow: hidden;margin-right: 2px;background-color: white">
+    <div style="margin-left: 25px;font-size:24px"><a href="zhuye.html">用户信息</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="bookInfo.html">图书信息</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="AdminInfo.html">管理员信息</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="borrowbook.html">借书</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="TotalBorrowAndReturn.html">借阅查询</a></div>
+  </div>
+  <div style=" flex:1;background-color: white">
+    <form action="" id="form_1" method="post" accept-charset="utf-8">
+      <div class="form-group">
+        <div align="center" style="font-size:24px">添加图书</div>
+        <input class="form-control" type="text" placeholder="请输入书名" id="name" name="name">
+        <span id="s_bookname" class="has-error" style="color: red"></span>
+      </div>
+      <div class="form-group">
+        <input class="form-control" type="text" placeholder="请输入作者名称" id="author" name="author">
+        <span id="s_author" class="has-error" style="color: red"></span>
+      </div>
+      <div class="form-group">
+        <input class="form-control" type="text" placeholder="请输入出版日期" id="publishdate" name="publishdate">
+        <span id="s_publishdate" class="has-error"style="color: red"></span>
+      </div>
+      <div class="form-group">
+        <input class="form-control" type="text" placeholder="请输入ISBN码" id="ISBN" name="ISBN">
+        <span id="s_ISBN" class="has-error"style="color: red"></span>
+      </div>
+      <div align="center"><button  id="btn_sub" type="submit" class="btn btn-group"style="font-size:20px;" >提交</button>
+        <a href="bookInfo.html"><button type="button" class="btn btn-info" style="font-size:20px;">返回</button></a>
+      </div>
+    </form>
+    <div id="add_msg" class="alert alert-danger" style="display: none;"></div>
+    <script>
+<!--表单成功提交后访问接口，获得返回的数据判断是否添加图书成功      -->
+      $("#btn_sub").click(function (){
+        if(checkBookname()&&checkBookauthor()&&checkBookpublishdate()&&checkBookISBN()){
+          $.post("addbook",$("#form_1").serialize(),function (data){
+            var node = document.getElementById ("add_msg");
+            node.style.display = 'block';
+            $("#add_msg").html(data);
+          })
+        }
+      });
+    </script>
+  </div>
+</div>
+</body>
+</html>

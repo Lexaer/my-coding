@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+  <title>图书管理系统</title>
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+  <script src="webjars/jquery/3.1.1/jquery.min.js"></script>
+  <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+  <script src="js/bootstrap.min.js"></script>
+  <script>
+    function deletesearch(id){
+      if(confirm("你确定删除吗？")){
+        location.href="/DeleteBAR?id="+id;
+      }
+    }
+  </script>
+</head>
+<body style="background-color: lightgrey">
+<div style="height: 60px;line-height: 60px; background-color: white"><img src="assets/logo.png" alt="" style="width: 40px; position: relative;top: 10px;left: 20px;margin-bottom: 30px">
+  <span style="margin-left: 25px;font-size:24px">图书管理系统</span>
+</div>
+<div style="display: flex">
+  <div style="width: 200px;min-height:92vh;overflow: hidden;margin-right: 2px;background-color: white">
+    <div style="margin-left: 25px;font-size:24px"><a href="zhuye.html">用户信息</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="bookInfo.html">图书信息</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="AdminInfo.html">管理员信息</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="borrowbook.html">借书</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="TotalBorrowAndReturn.html">借阅查询</a></div>
+  </div>
+  <div style="flex: 1;background-color: white">
+    <table class="table table-striped" id="table">
+      <tr>
+        <td>借阅者</td>
+        <td>书名</td>
+        <td>出借日期</td>
+        <td>归还日期</td>
+        <td>操作</td>
+      </tr>
+    </table>
+  </div>
+</div>
+<script>
+<!-- 查询所有的借阅记录 -->
+  window.onload=$(function(){
+    var table=document.getElementById("table").innerHTML;
+    $.get("FindAllBorrowAndReturn",{},function(data){
+      for(var i=0;i<data.length;i++){
+        if(data[i].returndate==null){
+      table+= `<tr>
+                <td>${data[i].username}</td>
+                <td>${data[i].bookname}</td>
+               <td>${data[i].createdate}</td>
+                <td></td>
+                <td><a type="button" class="btn btn-info" href="/ReturnBook?id=${data[i].id}">归还</a>
+                <a type="button" class="btn btn-danger" href="javascript:deletesearch(${data[i].id})">删除</a></td>
+            </tr>`
+        }
+        else{
+    table+= `<tr>
+              <td>${data[i].username}</td>
+              <td>${data[i].bookname}</td>
+             <td>${data[i].createdate}</td>
+              <td>${data[i].returndate}</td>
+              <td><a ></a>
+              <a type="button" class="btn btn-danger" href="javascript:deletesearch(${data[i].id})">删除</a></td>
+          </tr>`
+        }
+      }
+    },"JSON").then((res)=>{
+      document.getElementById("table").innerHTML=table;
+    });
+  });
+</script>
+</body>
+</html>

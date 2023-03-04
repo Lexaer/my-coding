@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>图书管理系统</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <script src="webjars/jquery/3.1.1/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script>
+    <!-- 在页面加载完成后加载表单检验函数，判断表单内容是否符合设计规范   -->
+    window.onload=function (){
+    document.getElementById("form").onsubmit=function (event){
+      event.preventDefault();
+      return checkUsername()&&checkUserage()&&checkUserPhone();
+    }
+  }
+  //检验读者名是否为空
+  function checkUsername(){
+      var username = document.getElementById("name").value;
+      var reg_username= /^[\u4e00-\u9fa5_a-zA-Z0-9]+$/
+      var flag=reg_username.test(username);
+      var s_username=document.getElementById("s_username");
+      if(flag){
+        s_username.innerHTML="";
+      }else{
+        s_username.innerHTML="姓名不能为空";
+      }
+      return flag;
+  }
+  //检验读者年龄是否正常
+    function checkUserage(){
+      var userage = document.getElementById("age").value;
+      var flag;
+      if(userage>100||userage<=0){
+        flag=false;
+      }else{
+        flag=true;
+      }
+      var s_age=document.getElementById("s_age");
+      if(flag){
+        s_age.innerHTML=""
+      }else{
+        s_age.innerHTML="年龄有误"
+      }
+      return flag;
+    }
+    //检验读者手机号码是否由11位数字组成
+  function checkUserPhone(){
+      var userphone=document.getElementById("phone").value;
+      var reg_userphone=/^[0-9]{11}$/;
+      var flag=reg_userphone.test(userphone);
+      var s_phone=document.getElementById("s_phone");
+      if(flag){
+        s_phone.innerHTML="";
+      }else{
+        s_phone.innerHTML="联系方式有误";
+      }
+      return flag;
+  }
+  </script>
+<!-- 页面主体布局-->
+</head>
+<body style="background-color: lightgrey">
+<div style="height: 60px;line-height: 60px; background-color: white"><img src="assets/logo.png" alt="" style="width: 40px; position: relative;top: 10px;left: 20px;margin-bottom: 30px">
+  <span style="margin-left: 25px;font-size:24px">图书管理系统</span>
+</div>
+<div style="display: flex">
+  <div style="width: 200px;min-height:92vh;overflow: hidden;margin-right: 2px;background-color: white">
+    <div style="margin-left: 25px;font-size:24px"><a href="zhuye.html">用户信息</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="bookInfo.html">图书信息</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="AdminInfo.html">管理员信息</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="borrowbook.html">借书</a></div>
+    <div style="margin-left: 25px;font-size:24px"><a href="TotalBorrowAndReturn.html">借阅查询</a></div>
+  </div>
+  <div style=" flex:1;background-color: white">
+    <form action="" id="form"  accept-charset="utf-8">
+      <div class="form-group">
+        <div align="center" style="font-size:24px">添加用户</div>
+        <input class="form-control" type="text" placeholder="请输入姓名" id="name" name="name">
+        <span id="s_username" class="has-error" style="color: red"></span>
+      </div>
+      <div class="form-group">
+        <input  type="radio" name="sex" value="男" checked="checked">男
+        <input  type="radio" name="sex" value="女">女
+      </div>
+      <div class="form-group">
+        <input class="form-control" type="text" placeholder="请输入年龄" id="age" name="age">
+        <span id="s_age" class="has-error" style="color: red"></span>
+      </div>
+      <div class="form-group">
+        <input class="form-control" type="text" placeholder="请输入联系方式" id="phone" name="phone">
+        <span id="s_phone" class="has-error"style="color: red"></span>
+      </div>
+      <div align="center"><button  id="btn_sub" type="submit" class="btn btn-group" style="font-size:20px;" >提交</button>
+        <a href="zhuye.html"><button type="button" class="btn btn-info" style="font-size:20px;">返回</button></a>
+      </div>
+    </form>
+    <div id="add_msg" class="alert alert-danger" style="display: none;"></div>
+    <script>
+      <!--表单成功提交后访问接口，获得返回的数据判断是否添加用户成功      -->
+        $("#btn_sub").click(function (){
+          if(checkUsername()&&checkUserage()&&checkUserPhone()){
+            $.post("adduser",$("#form").serialize(),function (data){
+              var node = document.getElementById ("add_msg");
+              node.style.display = 'block';
+              $("#add_msg").html(data);
+            })
+          }
+        });
+    </script>
+  </div>
+</div>
+</body>
+</html>
